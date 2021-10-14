@@ -71,12 +71,37 @@ App = {
 		// show the account and render the tasks
 
 		$("#account").html(App.account)
+		await App.renderTasks()
 
 		App.setLoading(false)
 	},
 
 	renderTasks: async() => {
 		// load the tasks from the block chain
+		const taskCount = await App.todoList.taskCount()
+		const $taskTemplate = $(".taskTemplate")
+
+		for(var i =1; i <= taskCount; i++) {
+			var task = await App.todoList.tasks(i)
+			var taskId = task[0].toNumber()
+			var taskContent = task[1]
+			var taskCompleted = task[2]
+
+			var $newTaskTemplate = $taskTemplate.clone()
+
+			$newTaskTemplate.find(".content").html(taskContent)
+
+			$newTaskTemplate.find("input").prop("name", taskId).prop("checked", taskCompleted)
+
+			if (taskCompleted) {
+				$("#completedTaskList").append($newTaskTemplate)
+			} else {
+				$("#taskList").append($newTaskTemplate)
+			}
+
+			$newTaskTemplate.show()
+		}
+
 
 
 		// render out each task with anew task template
