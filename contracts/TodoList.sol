@@ -19,6 +19,18 @@ contract TodoList {
 	// make a constructure or __init__ -- it is called whenever the smart contract is run for the first time
 	// add a default todo list
 
+	// this is an event
+	event TaskCreated(
+		uint id,
+		string content,
+		bool completed
+	);
+
+	event TaskCompleted(
+		uint id,
+		bool completed
+	);
+
 	constructor() public {
 		createTask("This is the first task!!");
 	}
@@ -26,6 +38,15 @@ contract TodoList {
 	function createTask(string memory _content) public {
 		taskCount++;
 		tasks[taskCount] = Task(taskCount, _content, false);
+		emit TaskCreated(taskCount, _content, false);
 	}
 
+	function toggleCompleted(uint id) public {
+		Task memory _task = tasks[id]; // that underscore is just a convention
+
+		_task.completed = !_task.completed;
+		tasks[id] = _task;
+		
+		emit TaskCompleted(id, _task.completed);
+	}
 }

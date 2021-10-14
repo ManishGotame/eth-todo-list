@@ -44,7 +44,11 @@ App = {
 	},
 
 	loadAccount: async() => {
-		App.account = web3.eth.accounts[0]
+		// App.account = web3.eth.accounts[0]
+		web3.eth.defaultAccount = web3.eth.accounts[0]
+
+		App.account = web3.eth.defaultAccount
+
 		console.log(App.account)
 	},
 
@@ -91,7 +95,7 @@ App = {
 
 			$newTaskTemplate.find(".content").html(taskContent)
 
-			$newTaskTemplate.find("input").prop("name", taskId).prop("checked", taskCompleted)
+			$newTaskTemplate.find("input").prop("name", taskId).prop("checked", taskCompleted).on("click", App.toggleCompleted)
 
 			if (taskCompleted) {
 				$("#completedTaskList").append($newTaskTemplate)
@@ -101,10 +105,24 @@ App = {
 
 			$newTaskTemplate.show()
 		}
+	},
 
+	createTask: async () => {
+		App.setLoading(true)
 
+		const content = $("#newTask").val()
 
-		// render out each task with anew task template
+		await App.todoList.createTask(content)
+		window.location.reload()
+	},
+
+	toggleCompleted: async(e) => {
+		App.setLoading(true)
+
+		const taskId = e.target.name
+
+		await App.todoList.toggleCompleted(taskId)
+		window.location.reload()
 	},
 
 
